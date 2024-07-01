@@ -55,12 +55,6 @@ Resources:
                   - logs:PutLogEvents
                 Resource: arn:aws:logs:*:*:*
 
-  PipelineArtifactStore:
-    Type: AWS::S3::Bucket
-    Properties:
-      BucketName: !Sub "${ProjectName}-artifact-store"
-      AccessControl: Private  # Ajuste conforme suas necessidades de segurança
-
   CDKBuildProject:
     Type: AWS::CodeBuild::Project
     Properties:
@@ -82,13 +76,10 @@ Resources:
     Type: AWS::CodePipeline::Pipeline
     Properties:
       RoleArn: !GetAtt PipelineRole.Arn
-      ArtifactStore:
-        Type: S3
-        Location: !Ref PipelineArtifactStore
       Stages:
         - Name: Source
           Actions:
-            - Name: SourceAction
+            - Name: GitHub_Source
               ActionTypeId:
                 Category: Source
                 Owner: ThirdParty
