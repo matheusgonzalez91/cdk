@@ -68,6 +68,9 @@ Resources:
       Source:
         Type: CODEPIPELINE
         BuildSpec: buildspec.yml  # Seu arquivo de especificação de build do CodeBuild
+      Artifacts:
+        Type: CODEPIPELINE  # Tipo de artefato de saída
+        Name: BuildOutput    # Nome do artefato de saída
 
   Pipeline:
     Type: AWS::CodePipeline::Pipeline
@@ -76,11 +79,11 @@ Resources:
       Stages:
         - Name: Source
           Actions:
-            - Name: SourceAction
+            - Name: GitHub_Source
               ActionTypeId:
                 Category: Source
                 Owner: ThirdParty
-                Provider: BitBucket
+                Provider: GitHub
                 Version: 1
               Configuration:
                 Owner: matheusgonzalez91
