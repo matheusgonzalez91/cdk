@@ -35,25 +35,11 @@ Resources:
                   - cloudformation:*
                 Resource: '*'
 
-  CodeBuildRole:
-    Type: AWS::IAM::Role
+  PipelineArtifactStore:
+    Type: AWS::S3::Bucket
     Properties:
-      AssumeRolePolicyDocument:
-        Statement:
-          - Effect: Allow
-            Principal:
-              Service: codebuild.amazonaws.com
-            Action: sts:AssumeRole
-      Policies:
-        - PolicyName: CodeBuildPolicy
-          PolicyDocument:
-            Statement:
-              - Effect: Allow
-                Action:
-                  - logs:CreateLogGroup
-                  - logs:CreateLogStream
-                  - logs:PutLogEvents
-                Resource: arn:aws:logs:*:*:*
+      BucketName: !Sub "${ProjectName}-artifact-store"
+      AccessControl: Private  # Ajuste conforme suas necessidades de segurança
 
   CDKBuildProject:
     Type: AWS::CodeBuild::Project
@@ -76,10 +62,13 @@ Resources:
     Type: AWS::CodePipeline::Pipeline
     Properties:
       RoleArn: !GetAtt PipelineRole.Arn
+      ArtifactStore:
+        Type: S3
+        Location: !Ref PipelineArtifactStore
       Stages:
         - Name: Source
           Actions:
-            - Name: GitHub_Source
+            - Name: SourceAction
               ActionTypeId:
                 Category: Source
                 Owner: ThirdParty
